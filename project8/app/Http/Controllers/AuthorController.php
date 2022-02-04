@@ -6,6 +6,7 @@ use App\Models\Author;
 use App\Http\Requests\StoreAuthorRequest;
 use App\Http\Requests\UpdateAuthorRequest;
 
+
 use Illuminate\Http\Request;
 
 class AuthorController extends Controller
@@ -44,6 +45,8 @@ class AuthorController extends Controller
         // $authors = Author::all()->sortBy('name', SORT_REGULAR, true);
         // iki 100 objektu tinka, jeigu dideli kiekiai geriau naudot orderby, veikia greiciau
 
+        // filtravimo pavyzdys - paieska, paieskos puslapis nukreipia i kita puslapi su rezultatais
+
 
         $sortCollumn = $request->sortCollumn; //name
         $sortOrder = $request->sortOrder; //ASC
@@ -54,7 +57,19 @@ class AuthorController extends Controller
             $authors = Author::orderby($sortCollumn, $sortOrder)->get();
         }
 
-        $select_array = ['id', 'name', 'surname', 'username', 'description'];
+        $select_array = array_keys($authors->first()->getAttributes());
+        //$authors - kolekcija, sudetingesnis masytas
+        // first() - grazina viena irasa is kolekcijos
+        // kolekcijos objektas - informacija apie objekta yra kur kas giliau, su foreach'u nepasieksi
+        // reikia info apie objekta, raktu ir informacijos, is to ir atsiranda funkcija "getAttributes()"
+        // ji gauna apie kolekcija info kaip apie paprasta masyva
+        //array_keys galima pasiimti is DB stulpeliu pavadinimus
+
+        //alt variantas $select_array = DB::getSchemaBuilder()->getColumnListing('authors');
+        //kreipiasi tiesiai i DB, paima struktura, ir kaip masyva grazina DB stulpeliu pavadinimus,
+        // bet geriau controlery nenaudoti sio, geriau imesti i modeli.
+        // sitai funkcijai reik isimesti "use \Illuminate\Support\Facades\DB;" biblioteka
+
         // 0(raktas) - id(reiksme)
         // 1(raktas) - name(reiksme)
 
@@ -144,5 +159,39 @@ class AuthorController extends Controller
     public function destroy(Author $author)
     {
         //
+    }
+
+    public function search(Request $request)
+    {   //$authors = Author::all();
+
+        //atrinkti autoriu/ius kurio/iu id = 34
+
+        $search_key = $request->search_key; //$request->search_key, ateis is imput lauko
+
+        // AND ir OR
+        // description panasus yra i paieskos zodi arba(OR) vardas panasus i paieskos zodi (pagal du stulpelius vykdoma paieska)
+        // description panasus yra i paieskos zodi arba(OR) vardas panasus i paieskos zodi OR pavarde panasu i paieskos zodi (pagal 3 stulpelius vykdoma paieska)
+
+        // AND abu stulpeliai turi atitikti paieskos zodi
+
+        $authors = Author::where('description', 'LIKE', '%' . $search_key . '%')
+            ->orWhere('name', 'LIKE', '%' . $search_key . '%')
+            ->orWhere('surname', 'LIKE', '%' . $search_key . '%')
+            ->orWhere('username', 'LIKE', '%' . $search_key . '%')
+            ->orWhere('description', 'LIKE', '%' . $search_key . '%')
+            ->get();
+
+        //where()
+        // 1 parametras - stulpelio pavadinimas
+        // 2 - default yra reiskme, nebent nurodome treciaji (jeigu 3 nurodytas, 2 parametras yra operacijos veiksmas)
+        // 3 - reiksme
+        // where('name', '=', 'jane'); Operacijos veiksmai gali buti >,<,<=,=>,=, LIKE
+        // %% iesko teksto kuris turi specifini simboli, kaip siuo atveju 3
+
+        //where() griezta salyga
+        //imu autorius kur yra kazkokia salyga (id, 34)(stulpelis, reiksme)
+
+
+        return view('author.search', ['authors' => $authors]);
     }
 }

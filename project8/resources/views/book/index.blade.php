@@ -2,29 +2,29 @@
 
 @section('content')
     <div class="container">
-        <form method="GET" action="{{route('author.index')}}">
+        <form method="GET" action="{{route('book.bookfilter')}}">
             @csrf
-            {{--<input type="text" name="sortCollumn">--}}
+            <select name="author_id">
+            @foreach ($authors as $author)
+                <option value="{{$author->id}}">{{$author->name}}</option>
+            @endforeach
+        </select>
+        <button type="submit">Filter</button>
+        </form>
+
+        <form method="GET" action="{{route('book.index')}}">
+            @csrf
             <select name="sortCollumn">
-                {{--<option value="id" selected>ID</option>
-                <option value="name">Name</option>
-                <option value="surname">Surname</option>
-                <option value="username">Username</option>
-                <option value="description">Description</option>--}}
                 @foreach ($select_array as $key => $item)
-                {{--id, name, surname...--}}
-                {{--0, 1, 2...--}}
-                {{--uzkrovus psl turi buti pazymetas 0 masyvo elementas--}}
                 {{$key}}    
                 @if($item == $sortCollumn || ($key == 0 && empty($sortCollumn)) )
                         <option value="{{$item}}" selected>{{$item}}</option>
                     @else
                         <option value="{{$item}}" >{{$item}}</option>
                     @endif
-
+        
                 @endforeach
             </select>
-            {{--<input type="text" name="sortOrder">--}}
             <select name="sortOrder">
                 @if($sortOrder == 'asc' || empty($sortOrder))
                     <option value="asc" selected>Ascending</option>
@@ -50,19 +50,18 @@
         <table class="table table-striped">
             <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Surname</th>
-                <th>Username</th>
+                <th>Title</th>
                 <th>Description</th>
+                <th>Author ID</th>
             </tr>
 
-                @foreach ($authors as $author)
+                @foreach ($books as $book)
                 <tr>
-                    <td>{{$author->id}}</td>
-                    <td>{{$author->name}}</td>
-                    <td>{{$author->surname}}</td>
-                    <td>{{$author->username}}</td>
-                    <td>{{$author->description}}</td>
+                    <td>{{$book->id}}</td>
+                    <td>{{$book->title}}</td>
+                    <td>{{$book->description}}</td>
+                    {{--autoriaus varda ir pavarde reik atvaizduoti, reik modeli sukurti rysio--}}
+                    <td>{{$book->bookAuthor->name}} {{$book->bookAuthor->surname}}</td>
                 </tr>
                 @endforeach
         </table>
