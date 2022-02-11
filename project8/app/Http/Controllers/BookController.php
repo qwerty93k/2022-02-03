@@ -172,4 +172,34 @@ class BookController extends Controller
 
         return view('book.indexpagination', ['books' => $books, 'sortCollumn' => $sortCollumn, 'sortOrder' => $sortOrder, 'select_array' => $select_array]);
     }
+    public function indexsortfilter(Request $request)
+    {
+        $sortCollumn = $request->sortCollumn;
+        $sortOrder = $request->sortOrder;
+        $author_id = $request->author_id;
+
+        $page_limit = 2;
+
+        $item_book = Book::all();
+        $book_collumns = array_keys($item_book->first()->getAttributes());
+        $select_array = $book_collumns;
+
+        //pasirinkti visas knygas kuriu autoriaus ir 1 ir isrikiuoti pagal id mazejimo tvarka
+        if (empty($sortCollumn) and empty($sortOrder) and empty($author_id)) {
+            $books = Book::paginate($page_limit);
+        } else {
+            if ($author_id == 'all') {
+                $books = Book::orderBy($sortCollumn, $sortOrder)->paginate($page_limit);
+            } else {
+                $books = Book::where('author_id', '=', $author_id)->orderBy($sortCollumn, $sortOrder)->paginate($page_limit);
+            }
+        }
+        //$books = Book::where('author_id', '=', $author_id)->get();
+        //$books = Book::orderBy($sortCollumn, $sortOrder)->get();
+
+        //$books
+        $authors = Author::all();
+
+        return view('book.indexsortfilter', ['authors' => $authors, 'sortCollumn' => $sortCollumn, 'sortOrder' => $sortOrder, 'select_array' => $select_array, 'books' => $books, 'author_id' => $author_id]);
+    }
 }
