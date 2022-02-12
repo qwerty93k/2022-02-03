@@ -227,4 +227,14 @@ class BookController extends Controller
             'page_limit' => $page_limit
         ]);
     }
+
+    public function indexsortable()
+    {
+        //atfiltruoti duomenis kur author_id = 2;
+
+        $books = Book::where("author_id", "=", 2)->sortable()->paginate(15);
+        //paginate - yra biblioteka integruota laravely
+        //rikiavimo bibliotekos laravel neturi, reik pasidaryt/parsisiust?
+        return view('book.indexsortable', ['books' => $books]);
+    }
 }
