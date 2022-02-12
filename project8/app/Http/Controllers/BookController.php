@@ -6,7 +6,7 @@ use App\Models\Book;
 use App\Models\Author;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
-
+use App\Models\PaginationSetting;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -178,20 +178,36 @@ class BookController extends Controller
         $sortOrder = $request->sortOrder;
         $author_id = $request->author_id;
 
-        $page_limit = 2;
+        $paginationSettings = PaginationSetting::where('visible', '=', 1)->get();
+
+        $page_limit = $request->page_limit;
+        //$page_limit = 15;
 
         $item_book = Book::all();
         $book_collumns = array_keys($item_book->first()->getAttributes());
         $select_array = $book_collumns;
 
         //pasirinkti visas knygas kuriu autoriaus ir 1 ir isrikiuoti pagal id mazejimo tvarka
+
+        //kada page_limit = 1, tai reiskia kad mes norime atvaizduoti visas reiksmes
+        //tai reiskia kad norime nuimti pusliapiavima, paginate funkcijos nereikia paleisti,
+        //reikia isskirti dar viena atveji kai mes nenorime puslapiavimo
+
         if (empty($sortCollumn) and empty($sortOrder) and empty($author_id)) {
             $books = Book::paginate($page_limit);
         } else {
             if ($author_id == 'all') {
-                $books = Book::orderBy($sortCollumn, $sortOrder)->paginate($page_limit);
+                if ($page_limit == 1) {
+                    $books = Book::orderBy($sortCollumn, $sortOrder)->get();
+                } else {
+                    $books = Book::orderBy($sortCollumn, $sortOrder)->paginate($page_limit);
+                }
             } else {
-                $books = Book::where('author_id', '=', $author_id)->orderBy($sortCollumn, $sortOrder)->paginate($page_limit);
+                if ($page_limit == 1) {
+                    $books = Book::where('author_id', '=', $author_id)->orderBy($sortCollumn, $sortOrder)->get();
+                } else {
+                    $books = Book::where('author_id', '=', $author_id)->orderBy($sortCollumn, $sortOrder)->paginate($page_limit);
+                }
             }
         }
         //$books = Book::where('author_id', '=', $author_id)->get();
@@ -200,6 +216,15 @@ class BookController extends Controller
         //$books
         $authors = Author::all();
 
-        return view('book.indexsortfilter', ['authors' => $authors, 'sortCollumn' => $sortCollumn, 'sortOrder' => $sortOrder, 'select_array' => $select_array, 'books' => $books, 'author_id' => $author_id]);
+        return view('book.indexsortfilter', [
+            'authors' => $authors,
+            'sortCollumn' => $sortCollumn,
+            'sortOrder' => $sortOrder,
+            'select_array' => $select_array,
+            'books' => $books,
+            'author_id' => $author_id,
+            'paginationSettings' => $paginationSettings,
+            'page_limit' => $page_limit
+        ]);
     }
 }
