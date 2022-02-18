@@ -63,7 +63,8 @@ class BookController extends Controller
      */
     public function create()
     {
-        //
+        $authors = Author::all();
+        return view('book.create', ['authors' => $authors]);
     }
 
     /**
@@ -72,9 +73,32 @@ class BookController extends Controller
      * @param  \App\Http\Requests\StoreBookRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreBookRequest $request)
+    public function store(Request $request)
     {
-        //
+        $book = new Book;
+
+        $book->title = $request->book_title;
+        $book->description = $request->book_description;
+        //jeigu checkbox pazymi kuria nauja autoriu
+
+        if ($request->book_newauthor) {
+
+            $author = new Author;
+
+            $author->name = $request->author_name;
+            $author->surname = $request->author_surname;
+            $author->username = $request->author_username;
+            $author->description = $request->author_description;
+            $author->save();
+
+            $book->author_id = $author->id;
+        } else {
+            $book->author_id = $request->book_authorid;
+        }
+
+        $book->save();
+
+        return redirect()->route('book.index');
     }
 
     /**

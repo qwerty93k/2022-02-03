@@ -30,6 +30,8 @@ Route::prefix('authors')->group(function () {
 Route::prefix('books')->group(function () {
     Route::get('', 'App\Http\Controllers\BookController@index')->name('book.index');
     Route::get('bookfilter', 'App\Http\Controllers\BookController@bookfilter')->name('book.bookfilter');
+    Route::get('create', 'App\Http\Controllers\BookController@create')->name('book.create');
+    Route::post('store', 'App\Http\Controllers\BookController@store')->name('book.store');
     Route::get('indexpagination', 'App\Http\Controllers\BookController@indexpagination')->name('book.indexpagination');
     Route::get('indexsortfilter', 'App\Http\Controllers\BookController@indexsortfilter')->name('book.indexsortfilter');
     Route::get('indexsortable', 'App\Http\Controllers\BookController@indexsortable')->name('book.indexsortable');
@@ -43,6 +45,8 @@ Route::prefix('ratings')->group(function () {
     Route::get('create', 'App\Http\Controllers\RatingController@create')->name('rating.create');
     Route::post('store', 'App\Http\Controllers\RatingController@store')->name('rating.store');
     Route::post('post', 'App\Http\Controllers\RatingController@post')->name('rating.post');
+    Route::get('createjavascript', 'App\Http\Controllers\RatingController@createjavascript')->name('rating.createjavascript');
+    Route::post('createjavascript', 'App\Http\Controllers\RatingController@storejavascript')->name('rating.storejavascript');
     //Route::get('indexsortfilter', 'App\Http\Controllers\BookController@indexsortfilter')->name('book.indexsortfilter');
     //Route::get('indexsortable', 'App\Http\Controllers\BookController@indexsortable')->name('book.indexsortable');
     //Route::get('indexadvancedsort', 'App\Http\Controllers\BookController@indexadvancedsort')->name('book.indexadvancedsort');

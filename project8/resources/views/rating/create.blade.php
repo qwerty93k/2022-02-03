@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
 
-    <form method="GET" action="{{route('rating.create')}}">
+    <form method="POST" action="{{route('rating.create')}}">
         <input type="number" name="input_count" value="{{$input_count}}">
         <button type="submit">OK</button>
     </form>    
