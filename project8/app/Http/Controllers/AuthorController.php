@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Author;
 use App\Http\Requests\StoreAuthorRequest;
 use App\Http\Requests\UpdateAuthorRequest;
-
-
+use App\Models\Book;
 use Illuminate\Http\Request;
 
 class AuthorController extends Controller
@@ -102,7 +101,7 @@ class AuthorController extends Controller
      */
     public function create()
     {
-        //
+        return view('author.create');
     }
 
     /**
@@ -111,9 +110,33 @@ class AuthorController extends Controller
      * @param  \App\Http\Requests\StoreAuthorRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreAuthorRequest $request)
+    public function store(Request $request)
     {
-        //
+        $author = new Author;
+        $author->name = $request->author_name;
+        $author->surname = $request->author_surname;
+        $author->username = $request->author_username;
+        $author->description = $request->author_description;
+
+        $author->save();
+
+        //ar checkbox yra pazymetas, jeigu pazymetas pridedame ir autoriu ir knygas
+
+        if ($request->author_newbooks) {
+
+            //$request->book_title; masvyas ir jis yra tokio ilgio kiek turime input
+            $books_count = count($request->book_title);
+
+            for ($i = 0; $i < $books_count; $i++) {
+
+                $book = new Book;
+                $book->title = $request->book_title;
+                $book->description = $request->book_description;
+                $book->author_id = $author->id;
+            }
+        }
+
+        return redirect()->route('author.index');
     }
 
     /**
