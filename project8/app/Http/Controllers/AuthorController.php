@@ -112,6 +112,59 @@ class AuthorController extends Controller
      */
     public function store(Request $request)
     {
+        //min kiek galime ivesti min simboliu
+        //max kiek galime ivesti max simboliu
+        //alpha tikrina ar ivestos tik raides
+        //alpha_num tikra ar ivestos tik raides arba skaiciai
+        //alpha_dash tikrina ar ivestos tik raides arba skaiciais, bet papildomai dar priima 2 simbolius: _ ir - 
+        //numeric tikrina ar skaicius, integer(3.14, -5, 15, 0)
+        //integer - tikrina ar sveikas skaicius (-, 0, +)
+
+        //naturalus skaicius [1,+inf]
+        //gt (greater than) gt:0
+        //gte (greater than or equal) gte:0
+        //lt(less than) lt:0
+        //lte (less than or equal) lte:0
+        //integer|>0
+
+        //date - tikrina ar data
+        //date_equals - tikrina ar data lygi
+        //before - tikrina ar data yra ankstesne nei nurodyta
+        //before_or_equal - tikrina ar data yra ankstesne arba lygi
+        //after -tikrina ar data yra velesne
+        //after_or_equal tikrina ar data yra velesne arba lygi
+
+        // tikrinti ar ivestas lt telefono numeris?
+
+        // +370 6 123 4567
+        // +3706
+        // string
+
+        // 861324567 - tikrinti ar sveikas skaicius integer ir kiek skaitmenu yra skaiciuje (nevisai atitinka)
+
+
+        // required
+        //
+
+        //regex - simboliu paieska pagal tam tikrus kriterijus/sablonus
+
+        $request->validate([
+            //kaireje puseje input laukelio vardas => desineje validacijos taisykle (kiekviena taisykle atskiriama | )
+            "author_name" => "required|min:2|max:10",
+            "author_surname" => "required|alpha",
+            "author_username" => "required|alpha_num",
+            "author_description" => "required|integer|gt:0",
+            "number1" => "required",
+            "number2" => "required|gt:number1", // lygina su number1
+            "data1" => "required|date|date_equals:data2",
+            "data2" => "required|date",
+            //'phone' => "requred|regex:/(86|\+3706)\d{7}/'"
+            'phone' => ["required", 'regex:/(86|\+3706)\d{7}/']
+        ]);
+
+        //if, jeigu sios taisykles patenkinamos, kodas vykdomas toliau
+        //jeigu nors viena taisykle nera tenkinama, store funkcija nutraukiama ir grazina kintamaji errors
+
         $author = new Author;
         $author->name = $request->author_name;
         $author->surname = $request->author_surname;

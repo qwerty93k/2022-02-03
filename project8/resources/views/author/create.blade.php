@@ -1,29 +1,127 @@
 @extends('layouts.app')
 
 @section('content')
+
 <div class="container">
+    <div class="errors">
+        {{--{{print_r($errors)}}--}}
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>
+                            {{$error}}
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+    </div>
     <form method="POST" action="{{ route('author.store')}}">
         @csrf
         <div class="form-group">
             <label for="author_name">Name</label>
-            <input class="form-control" type='text' name='author_name' />
+            <input class="form-control @error('author_name') is-invalid @enderror" type='text' name='author_name' value="{{ old('author_name')}}"/>
+            {{-- @error veikia kaip ifas, tikrina ar klaidu masyvae yra susijusi su laukeliu klaida, kitu atveju nieko neatvaiduos--}}
+            @error('author_name')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
         </div>
         <div class="form-group">
             <label for="author_surname">Surname</label>
-            <input class="form-control" type='text' name='author_surname' />
+            <input class="form-control @error('author_surname') is-invalid @enderror" type='text' name='author_surname' value="{{ old('author_surname')}}"/>
+            @error('author_surname')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+        @enderror
         </div>
         <div class="form-group">
             <label for="author_username">Name</label>
-            <input class="form-control" type='text' name='author_username' />
+            <input class="form-control @error('author_username') is-invalid @enderror" type='text' name='author_username' value="{{ old('author_username')}}"/>
+            @error('author_username')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+        @enderror
         </div>
         <div class="form-group">
             <label for="author_description">Description</label>
-            <textarea class="form-control" name='author_description'> 
-            </textarea>
+            <textarea class="form-control @error('author_description') is-invalid @enderror" name='author_description' >{{ old('author_description')}}</textarea>
+            @error('author_description')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+        @enderror
         </div>
         <div class="form-group">
             <label for="author_newbooks">Add new books?</label>
             <input id="author_newbooks" type="checkbox" name="author_newbooks"/>
+
+            {{-- Validaciju testavimas--}}
+
+            <div class="form-group">
+                <label for="number1">Number 1</label>
+                <input class="form-control @error('number1') is-invalid @enderror" type='number' name='number1' value="{{ old('number1')}}"/>
+                {{-- @error veikia kaip ifas, tikrina ar klaidu masyvae yra susijusi su laukeliu klaida, kitu atveju nieko neatvaiduos--}}
+                @error('number1')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="number2">Number 2</label>
+                <input class="form-control @error('number2') is-invalid @enderror" type='number' name='number2' value="{{ old('number2')}}"/>
+                {{-- @error veikia kaip ifas, tikrina ar klaidu masyvae yra susijusi su laukeliu klaida, kitu atveju nieko neatvaiduos--}}
+                @error('number2')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+
+            {{-- Validaciju testavimas // datu validavimas--}}
+
+            <div class="form-group">
+                <label for="data1">Data 1</label>
+                <input class="form-control @error('data1') is-invalid @enderror" type='text' name='data1' value="{{ old('data1')}}"/>
+                {{-- @error veikia kaip ifas, tikrina ar klaidu masyvae yra susijusi su laukeliu klaida, kitu atveju nieko neatvaiduos--}}
+                @error('data1')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="data2">Data 2</label>
+                <input class="form-control @error('data2') is-invalid @enderror" type='text' name='data2' value="{{ old('data2')}}"/>
+                {{-- @error veikia kaip ifas, tikrina ar klaidu masyvae yra susijusi su laukeliu klaida, kitu atveju nieko neatvaiduos--}}
+                @error('data2')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+
+            {{-- Telefono numeris --}}
+
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input class="form-control @error('phone') is-invalid @enderror" type='text' name='phone' value="{{ old('phone')}}"/>
+                {{-- @error veikia kaip ifas, tikrina ar klaidu masyvae yra susijusi su laukeliu klaida, kitu atveju nieko neatvaiduos--}}
+                @error('phone')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+
             {{-- checkbox neturi value atributo --}}
             {{-- jei chekbox nepazymetas, i backend yra grazinama false reiksme, jei pazymetas true --}}
 
@@ -54,6 +152,7 @@
         </div>        
     </form>    
 </div>
+
 <script>
     $(document).ready(function(){
         $('#author_newbooks').click(function() {
