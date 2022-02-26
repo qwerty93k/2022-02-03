@@ -27,6 +27,8 @@ Route::prefix('authors')->group(function () {
     Route::get('search', 'App\Http\Controllers\AuthorController@search')->name('author.search');
     Route::get('create', 'App\Http\Controllers\AuthorController@create')->name('author.create');
     Route::post('store', 'App\Http\Controllers\AuthorController@store')->name('author.store');
+    Route::get('createvalidate', 'App\Http\Controllers\AuthorController@createvalidate')->name('author.createvalidate');
+    Route::post('storevalidate', 'App\Http\Controllers\AuthorController@storevalidate')->name('author.storevalidate');
 });
 
 Route::prefix('books')->group(function () {
